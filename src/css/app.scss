@@ -1,1 +1,27 @@
 // app global css in SCSS form
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+.text-positive {
+  color: $positive;
+}
+
+.text-negative {
+  color: $negative;
+}
+
+@media (max-width: 600px) {
+  .q-table {
+    font-size: 12px;
+  }
+  
+  .q-table th, .q-table td {
+    padding: 4px 8px;
+  }
+}
+
+.q-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
