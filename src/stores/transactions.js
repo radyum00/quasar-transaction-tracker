@@ -2,52 +2,46 @@ import { defineStore, acceptHMRUpdate } from 'pinia'
 import { ref, computed, watch } from 'vue'
 
 export const useTransactionStore = defineStore('transactions', () => {
-  // Состояние
   const transactions = ref([])
+  const storageKey = 'transactions'
 
-  // Загрузка из localStorage при инициализации
   const loadFromStorage = () => {
-    const stored = localStorage.getItem('transactions')
+    const stored = localStorage.getItem(storageKey)
     if (stored) {
       transactions.value = JSON.parse(stored)
     }
   }
 
-  // Автоматическое сохранение в localStorage при изменении
   watch(transactions, (newVal) => {
-    localStorage.setItem('transactions', JSON.stringify(newVal))
+    localStorage.setItem(storageKey, JSON.stringify(newVal))
   }, { deep: true })
 
-  // Действия
   const addTransaction = (transaction) => {
     transactions.value.push({
       id: Date.now(),
-      ...transaction
+      ...transaction,
     })
   }
 
   const deleteTransaction = (id) => {
-    transactions.value = transactions.value.filter(t => t.id !== id)
+    transactions.value = transactions.value.filter((t) => t.id !== id)
   }
 
-  // Геттеры
   const totalBalance = computed(() => {
     return transactions.value.reduce((total, transaction) => {
-      return transaction.type === 'income'
-        ? total + transaction.amount
-        : total - transaction.amount
+      return transaction.type === 'income' ? total + transaction.amount : total - transaction.amount
     }, 0)
   })
 
   const totalIncome = computed(() => {
     return transactions.value
-      .filter(t => t.type === 'income')
+      .filter((t) => t.type === 'income')
       .reduce((total, t) => total + t.amount, 0)
   })
 
   const totalExpense = computed(() => {
     return transactions.value
-      .filter(t => t.type === 'expense')
+      .filter((t) => t.type === 'expense')
       .reduce((total, t) => total + t.amount, 0)
   })
 
@@ -60,14 +54,13 @@ export const useTransactionStore = defineStore('transactions', () => {
   const expensesByCategory = computed(() => {
     const categories = {}
     transactions.value
-      .filter(t => t.type === 'expense')
-      .forEach(t => {
+      .filter((t) => t.type === 'expense')
+      .forEach((t) => {
         categories[t.category] = (categories[t.category] || 0) + t.amount
       })
     return categories
   })
 
-  // Инициализация
   loadFromStorage()
 
   return {
@@ -78,7 +71,7 @@ export const useTransactionStore = defineStore('transactions', () => {
     totalIncome,
     totalExpense,
     recentTransactions,
-    expensesByCategory
+    expensesByCategory,
   }
 })
 

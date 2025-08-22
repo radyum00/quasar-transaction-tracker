@@ -1,5 +1,5 @@
 <template>
-  <q-item clickable :to="link">
+  <q-item clickable :to="link" :exact="exact">
     <q-item-section v-if="icon" avatar>
       <q-icon :name="icon" />
     </q-item-section>
@@ -28,6 +28,10 @@ defineProps({
   icon: {
     type: String,
     default: ''
+  },
+  exact: {
+    type: Boolean,
+    default: false
   }
 })
 </script>

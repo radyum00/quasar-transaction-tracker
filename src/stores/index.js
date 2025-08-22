@@ -1,6 +1,5 @@
 import { defineStore } from '#q-app/wrappers'
 import { createPinia } from 'pinia'
-import { useTransactionStore } from './transactions'
 
 /*
  * If not building with SSR mode, you can
@@ -11,7 +10,7 @@ import { useTransactionStore } from './transactions'
  * with the Store instance.
  */
 
-export default defineStore((/* { ssrContext } */) => {
+export default defineStore(() => {
   const pinia = createPinia()
   return pinia
 })
@@ -19,4 +18,5 @@ export default defineStore((/* { ssrContext } */) => {
   // You can add Pinia plugins here
   // pinia.use(SomePiniaPlugin)
 
-export { useTransactionStore }
+export { useTransactionStore } from './transactions'
+export { useCategoryStore } from './categories'

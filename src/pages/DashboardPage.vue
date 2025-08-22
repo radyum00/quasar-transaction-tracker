@@ -1,81 +1,25 @@
 <template>
   <q-page padding>
     <div class="row q-col-gutter-md">
-      <!-- Карточка общего баланса -->
+      <!-- Карты баланса -->
       <div class="col-12 col-md-4">
-        <q-card>
-          <q-card-section>
-            <div class="text-h6">Общий баланс</div>
-            <div class="text-h3" :class="totalBalance >= 0 ? 'text-positive' : 'text-negative'">
-              {{ formatCurrency(totalBalance) }}
-            </div>
-          </q-card-section>
-        </q-card>
+        <BalanceCard title="Общий баланс" :amount="totalBalance" :positive="totalBalance >= 0" />
       </div>
-
-      <!-- Карточка доходов -->
       <div class="col-12 col-md-4">
-        <q-card>
-          <q-card-section>
-            <div class="text-h6">Доходы</div>
-            <div class="text-h3 text-positive">{{ formatCurrency(totalIncome) }}</div>
-          </q-card-section>
-        </q-card>
+        <BalanceCard title="Доходы" :amount="totalIncome" positive />
       </div>
-
-      <!-- Карточка расходов -->
       <div class="col-12 col-md-4">
-        <q-card>
-          <q-card-section>
-            <div class="text-h6">Расходы</div>
-            <div class="text-h3 text-negative">{{ formatCurrency(totalExpense) }}</div>
-          </q-card-section>
-        </q-card>
+        <BalanceCard title="Расходы" :amount="totalExpense" :positive="false" />
       </div>
     </div>
 
-    <!-- График расходов по категориям -->
+    <!-- Диаграмма и недавние транзакции -->
     <div class="row q-mt-md">
       <div class="col-12 col-md-6">
-        <q-card class="q-mt-md">
-          <q-card-section>
-            <div class="text-h6">Расходы по категориям</div>
-            <apexchart
-              v-if="Object.keys(expensesByCategory).length"
-              type="pie"
-              :options="chartOptions"
-              :series="chartSeries"
-            ></apexchart>
-            <div v-else class="text-center q-pa-lg">
-              Нет данных о расходах
-            </div>
-          </q-card-section>
-        </q-card>
+        <ExpensesChart :expensesByCategory="expensesByCategory" />
       </div>
-
-      <!-- Последние транзакции -->
       <div class="col-12 col-md-6">
-        <q-card class="q-mt-md">
-          <q-card-section>
-            <div class="text-h6">Последние транзакции</div>
-            <q-list separator>
-              <q-item v-for="transaction in recentTransactions" :key="transaction.id">
-                <q-item-section>
-                  <q-item-label>{{ transaction.description }}</q-item-label>
-                  <q-item-label caption>{{ formatDate(transaction.date) }} • {{ transaction.category }}</q-item-label>
-                </q-item-section>
-                <q-item-section side>
-                  <q-item-label :class="transaction.type === 'income' ? 'text-positive' : 'text-negative'">
-                    {{ formatCurrency(transaction.amount) }}
-                  </q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-            <div v-if="!recentTransactions.length" class="text-center q-pa-lg">
-              Нет транзакций
-            </div>
-          </q-card-section>
-        </q-card>
+        <RecentTransactions :transactions="recentTransactions" />
       </div>
     </div>
   </q-page>
@@ -84,6 +28,9 @@
 <script setup>
 import { computed } from 'vue'
 import { useTransactionStore } from 'stores/transactions'
+import BalanceCard from 'components/BalanceCard.vue'
+import ExpensesChart from 'components/ExpensesChart.vue'
+import RecentTransactions from 'components/RecentTransactions.vue'
 
 const store = useTransactionStore()
 
@@ -92,28 +39,4 @@ const totalIncome = computed(() => store.totalIncome)
 const totalExpense = computed(() => store.totalExpense)
 const recentTransactions = computed(() => store.recentTransactions)
 const expensesByCategory = computed(() => store.expensesByCategory)
-
-const chartSeries = computed(() => Object.values(expensesByCategory.value))
-const chartOptions = computed(() => ({
-  labels: Object.keys(expensesByCategory.value),
-  legend: {
-    position: 'bottom'
-  }
-}))
-
-const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('ru-RU', {
-    style: 'currency',
-    currency: 'RUB'
-  }).format(amount)
-}
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('ru-RU', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
-  })
-}
 </script>

@@ -50,7 +50,8 @@ const linksList = [
     title: 'Дашборд',
     caption: 'Обзор финансов',
     icon: 'dashboard',
-    link: '/'
+    link: '/',
+    exact: true
   },
   {
     title: 'Добавить транзакцию',
